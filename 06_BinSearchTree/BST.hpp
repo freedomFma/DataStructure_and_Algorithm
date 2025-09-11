@@ -1,8 +1,8 @@
-#include "C++/DSA/04_BinTree/BinTree.hpp"
+#include "../04_BinTree/BinTree.hpp"
 //BST 模版类定义
 template <typename T> class BST: public BinTree{
 protected:
-	BinNodePosi(T) _hot;//命中节点的父亲 ❓暂时不太理解为什么要有这个数据
+	BinNodePosi(T) _hot;//命中节点的父亲 
 	BinNodePosi(T) connect34(BinNodePosi(T), BinNodePosi(T), BinNodePosi(T), BinNodePosi(T), BinNodePosi(T), BinNodePosi(T), BinNodePosi(T));
 	BinNodePosi(T) rotateAt(BinNodePosi(T) x);
 public:
@@ -17,8 +17,8 @@ template <typename T> BinNodePosi(T)& BST<T>::search (const T& e){
 	_hot = NULL;
 	searchIn(_root, e, _hot);
 }
-template <typename T> static BinNodePosi(T) &searchIn (BinNodePosi(T) & v, const T& e, BinNodePosi(T) hot){
-	if(!v || (v->data == e)) return hot = v;
+template <typename T> static BinNodePosi(T)& searchIn (BinNodePosi(T) & v, const T& e, BinNodePosi(T)& hot){
+	if(!v || (v->data == e)) return v;
 	hot = v;
 	return searchIn(((v->data < e) ? v->lc : v->rc) , e, hot);
 }
