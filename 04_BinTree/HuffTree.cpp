@@ -2,7 +2,7 @@
 #include "BinTree.hpp"
 #include "BinNode.hpp"
 #include "HuffChar.hpp"
-#include "C++/DSA/01_bitmap/Bitmap.hpp"
+#include "C++/DSA/00_bitmap/Bitmap.hpp"
 #include "C++/DSA/08_PrimiryQueue/Hashtable.hpp"
 
 #define HuffTree BinTree<HuffChar>

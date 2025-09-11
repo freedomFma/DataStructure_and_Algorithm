@@ -1,4 +1,4 @@
-#include "bitmap.hpp"
+#include "./Bitmap.hpp"
 
 void Eratosthenes(int n, char* file){
     Bitmap B(n);

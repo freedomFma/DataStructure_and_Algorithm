@@ -1,4 +1,4 @@
-#include "C++/DSA/04_BinTree/BinNode.hpp"
+#include "./BinNode.hpp"
 
 /** 模版类的定义 **/ 
 template <typename T> class BinTree{
