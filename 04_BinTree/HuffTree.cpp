@@ -1,9 +1,9 @@
-#include "C++/DSA/02_list/List.hpp"
+#include "../02_list/List.hpp"
 #include "BinTree.hpp"
 #include "BinNode.hpp"
 #include "HuffChar.hpp"
-#include "C++/DSA/00_bitmap/Bitmap.hpp"
-#include "C++/DSA/08_PrimiryQueue/Hashtable.hpp"
+#include "../00_bitmap/Bitmap.hpp"
+#include "../07_Dictionary/Hashtable.hpp"
 
 #define HuffTree BinTree<HuffChar>
 typedef List<HuffTree*> HuffForest;
@@ -54,4 +54,3 @@ static void generateCT
 		generateCT(code, length+1, table, v->rc);
 	}
 }
-

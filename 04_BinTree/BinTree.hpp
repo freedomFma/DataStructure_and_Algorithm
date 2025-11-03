@@ -89,30 +89,7 @@ template <typename T>BinNodePosi(T) BinTree<T>::attachAsRC(BinNodePosi(T) x, Bin
 	T = NULL;
 	return x;
 }
-// template <typename T>int BinTree<T>::remove(BinNodePosi(T) x){
-// 	if(!x) return 0;
-// 	if(!IsRoot(x)){
-// 		if(IsLChild(x)){
-// 			x->parent->lc = NULL;
-// 			_size -= x->height;//不知道，需要遍历才知道。❗️🙅
-// 			updateHeightAbove(x);
-// 			release(x);
-// 			x = NULL;
-// 		}
-// 		if(IsRChild(x)){
-// 			x->parent->rc = NULL;
-// 			_size -= x->height;//不知道，需要遍历才知道。❗️🙅
-// 			updateHeightAbove(x);
-// 			release(x);
-// 			x = NULL;
-// 		}
 
-// 	}
-// 	else{
-// 		_root = NULL;
-// 		_size = 0;
-// 	} 
-// }
 
 template <typename T>int BinTree<T>::remove(BinNodePosi(T) x){
 	FromParentTo(*x) = NULL;

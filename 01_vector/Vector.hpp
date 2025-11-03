@@ -65,6 +65,7 @@ public:
 	template <typename VST> void traverse ( VST& ); //遍历（使用函数对象，可全局性修改） 
 }; //Vector**
 
+
 // protected: 
 template <typename T> void Vector<T>::copyFrom ( T const* A, Rank lo, Rank hi ){//复制数组区间A[lo, hi) 
     _elem = new T[_capasity=max((hi - lo),DEFAULT_CAPACITY)*2];
@@ -107,6 +108,29 @@ template <typename T> void Vector<T>::merge ( Rank lo, Rank mi, Rank hi ){ //归
 }
 template <typename T> void Vector<T>::mergeSort ( Rank lo, Rank hi ){ //归并排序算法 
 
+}
+
+
+template <typename T> Rank Vector<T>:: partition ( Rank lo, Rank hi ){ //轴点构造算法 
+	swap(_elem[lo], _elem[lo+(rank()%(hi - lo))]); //随机抽取作为轴点
+	T pivot = _elem[lo]; //取出轴点作备份
+	while(lo < hi){
+		do hi--;
+		while((lo<hi) && (pivot <= _elem[hi])); //增大G的区域
+		if(lo<hi) _elem[lo] = _elem[hi]; //传给lo
+		do lo++;
+		while((lo<hi) && (pivot >= _elem[lo]));//增大L的区域
+		if(lo<hi) _elem[hi] = _elem[lo];//传给hi
+	}
+	_elem[hi] = pivot;//最终lo = hi，将备份轴点赋给轴点“应该在的位置”
+	return hi;
+
+}
+template <typename T> void Vector<T>::quickSort ( Rank lo, Rank hi ){//快速排序算法
+	if(hi - lo < 2 ) return;//递归基，子集只有一个元素
+	Rank mi = partition(lo, hi);//选取轴点
+	quickSort(lo, mi);//递归实现
+	quickSort(mi+1, hi);//递归实现
 }
 
 // public:

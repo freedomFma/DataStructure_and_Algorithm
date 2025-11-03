@@ -1,4 +1,4 @@
-#include "C++/DSA/02_list/ListNode.hpp"
+#include "./ListNode.hpp"
 template <typename T> class List{
 private:
 	int _size;
@@ -13,7 +13,8 @@ public:
 //构造函数、析构函数
 	List(){ init(); } //默认构造函数
 	//创建以e节点为first、尺寸为n的列表
-	List(ListNode<T>& e) { init(); header->succ = e; trailer->pred = e; e->pred = header; e->succ = trailer;}
+	List(ListNode<T>& e) { init(); header->succ = e; trailer->pred = e; 
+		e->pred = header; e->succ = trailer;}
 	//
 	List(List<T> const& L); //创建一个与List L一模一样的列表
 	List(List<T> const& L, Rank r, int n);//创建List L自秩为r起的n项
@@ -60,6 +61,17 @@ template <typename T> T List<T>::operator[](Rank r){
 		}
 		return p->data;
 	}
+
+
+
+template <typename T> ListNodePosi(T) List<T>::insertAsFirst(T const& e){
+	ListNode(T) x = new listNode(e);
+	x = header->succ->pred;
+	x->succ = header->succ;
+	header->succ = x;
+	x->pred = header;
+	_size++;
+}
 template <typename T> T List<T>::remove( ListNodePosi(T) p ){
 	T e = p->data;
 	p->pred->succ = p->succ;

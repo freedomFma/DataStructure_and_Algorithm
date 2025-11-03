@@ -13,7 +13,10 @@ protected:
 		_sz = 0; 
 	}
 public:
-	Bitmap(int n = 8){ M = new unsigned char[N = (n+7)/8]; memset(M ,0 ,N);}
+	Bitmap(int n = 8){ 
+		M = new unsigned char[N = (n+7)/8]; 
+		memset(M ,0 ,N);
+	}
 	//void *memset(void *ptr, int value, size_t num);	
 	//ptr：指向要设置的内存块起始地址。
 	//value：要填充的值（会被转换成 unsigned char 后填充）。
@@ -38,7 +41,6 @@ public:
 	void set(int k);
 	void clear(int k);
 	bool test(int k);
-
 };
 
 bool Bitmap::test(int k){
