@@ -17,3 +17,18 @@ template <typename T> struct ListNode {//列表节点模板类（以双向链表
 	ListNodePosi(T) insertAsPred( T const& e ); //紧靠当前节点之前插入新节点 
 	ListNodePosi(T) insertAsSucc( T const& e ); //紧随当前节点之后插入新节点 
 };
+
+
+template <typename T> ListNodePosi(T) ListNode<T>::insertAsPred(T const& e){
+	ListNodePosi(T) p = new ListNode(e, pred, this);
+	pred->succ = p;
+	pred = p;
+	return p;
+}
+
+template <typename T> ListNodePosi(T) ListNode<T>::insertAsSucc(T const& e){
+	ListNodePosi(T) p = new ListNode(e, this, succ);
+	succ->pred = p;
+	succ = p;
+	return p;
+}

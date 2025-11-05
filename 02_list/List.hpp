@@ -2,12 +2,16 @@
 template <typename T> class List{
 private:
 	int _size;
-	ListNodePosi(T) header;
-	ListNodePosi(T) trailer;
+	ListNode<T>* header;
+	ListNode<T>* trailer;
 protected: 
 //初始化
 	void init();
-	void List<T>::copyNode(ListNodePosi(T) p, int n);
+	void copyNode(ListNodePosi(T) p, int n);
+	void clear();
+	void selectSort(ListNodePosi(T) p, int n);
+	void insertionSort(ListNodePosi(T) p, int n);
+	void mergeSort(ListNodePosi(T) &p, int n);
 	
 public:
 //构造函数、析构函数
@@ -26,9 +30,12 @@ public:
 	ListNodePosi(T) first() const {return header->succ;}
 	ListNodePosi(T) last() const {return trailer->pred;}
 	ListNodePosi(T) find(T const& e) const;
+	ListNodePosi(T) find(T const& e, int n, ListNodePosi(T) p) const;
 	ListNodePosi(T) search(T const& e) const;	
+	ListNodePosi(T) search(T const& e, int n, ListNodePosi(T) p) const;
 	int disordered() const;
 	bool valid(ListNodePosi(T) p) {return p->data != NULL;}
+	ListNodePosi(T) selectMax(ListNodePosi(T) p, int n);
 	
 //可写接口
 	ListNodePosi(T) insertAsFirst(T const& e);
@@ -41,12 +48,21 @@ public:
 	int uniquify();
 
 //遍历
-	traverse();
+	void traverse(void (*visit) (T&));
 //运算器
 	T operator[](Rank r);
 };
 
 
+template <typename T> T List<T>::operator[](Rank r){
+		listNodePosi<T> p = first();
+		while(0 < r--){
+			p = p->succ;
+		}
+		return p->data;
+}
+
+//protected	 构造的实现
 template <typename T> void List<T>::init(){
 	header = new ListNode<T>;
 	trailer = new ListNode<T>;
@@ -54,16 +70,60 @@ template <typename T> void List<T>::init(){
 	trailer->pred = header; trailer->succ = NULL;
 	_size = 0;
 }
-template <typename T> T List<T>::operator[](Rank r){
-		listNodePosi<T> p = first();
-		while(0 < r--){
-			p = p->succ;
-		}
-		return p->data;
+//
+template <typename T> void List<T>::copyNode(ListNodePosi(T) p, int n){
+	init();
+	while(n--){
+		insertAsLast(p->data);
+		p = p->succ;
 	}
+}
 
 
+//public：构造函数的实现
+template <typename T> List<T>::List(ListNodePosi(T) p, int n){
+	copyNode(p, n);
+}
+template <typename T> List<T>::List(List<T> const& L){
+	copyNode(L.first(), L._size);
+}
+template <typename T> List<T>::List(List<T> const& L, Rank r, int n){
+	ListNodePosi(T) p = L.first();
+	while(r-- && p!= L.trailer) p = p->succ;
+	copyNode(p, n);
+}
+//析构函数
+template <typename T> void List<T>::clear(){
+	int oldSize = _size;
+	while( 0 < _size){
+		remove(header->succ);
+	}
+	return oldSize;
+}
+template <typename T> List<T>::~List(){
+	clear();
+	delete header;
+	delete trailer;
+}
 
+//public只读函数的实现
+template <typename T> ListNodePosi(T) List<T>::find(T const& e, int n, ListNodePosi(T) p) const {
+	while (0 < n--)
+		if(e == (p = p->pred)->data) return p;
+	return NULL;
+}
+template <typename T> ListNodePosi(T) List<T>::find(T const& e) const {
+	find(T const& e, _size, trailer);
+}
+//在有序列表内节点p的n个（真）前驱中，找到不大于e的最靠后者
+template <typename T> 
+ListNodePosi(T) List<T>::search(T const& e, int n, ListNodePosi(T) p) const{
+	do{ p = p->pred; n--; }
+	while((-1<n) && (e< p->data));
+	return p;
+}
+
+//public可写函数的实现
 template <typename T> ListNodePosi(T) List<T>::insertAsFirst(T const& e){
 	ListNode(T) x = new listNode(e);
 	x = header->succ->pred;
@@ -72,6 +132,15 @@ template <typename T> ListNodePosi(T) List<T>::insertAsFirst(T const& e){
 	x->pred = header;
 	_size++;
 }
+template <typename T> ListNodePosi(T) List<T>::insertB(ListNodePosi(T) p,T const& e){
+	_size ++;
+	return p->insertAsPred(e);
+}
+template <typename T> ListNodePosi(T) List<T>::insertA(ListNodePosi(T) p,T const& e){
+	_size ++;
+	return p->insertAsSucc(e);
+}
+
 template <typename T> T List<T>::remove( ListNodePosi(T) p ){
 	T e = p->data;
 	p->pred->succ = p->succ;
@@ -79,4 +148,36 @@ template <typename T> T List<T>::remove( ListNodePosi(T) p ){
 	delete p;
 	_size--;
 	return e;
+}
+
+
+
+//去重
+template <typename T> int List<T>::deduplicate(){
+	int oldSize = _size;
+	ListNodePosi(T) p = first();
+	for(Rank r = 0; p != trailer; p = p->succ){
+		if(ListNodePosi(T) q = find(p->data, r, p)) remove(q);
+		else r++;
+	}
+	return oldSize - _size;
+}
+//唯一化
+template <typename T> int List<T>::uniquify(){
+	if (_size < 2) return 0;
+	int oldSize = _size ;
+	ListNodePosi(T) p = first();
+	ListNodePosi(T) q;
+	while(trailer != (q = p->succ))
+		if(p -> data != q -> data) p = q;
+		else remove(q);
+	return oldSize - _size;
+}
+
+
+//遍历
+template <typename T> void List<T>::traverse(void (*visit) (T&)){
+	ListNodePosi(T) p = header;
+	while((p = p->succ) != trailer) 
+		visit(p->data);
 }
