@@ -10,7 +10,8 @@ protected:
 	void copyFrom ( T const* A, Rank lo, Rank hi ); //复制数组区间A[lo, hi) 
 	void expand(); //空间不足时扩容 
 	void shrink(); //装填因子过小时压缩 
-	bool bubble ( Rank lo, Rank hi ); //扫描交换 
+	bool bubble_v1 ( Rank lo, Rank hi ); //扫描交换 
+	Rank bubble_v2 ( Rank lo, Rank hi ); //扫描交换 
 	void bubbleSort ( Rank lo, Rank hi ); //起泡排序算法 
 	Rank maxItem ( Rank lo, Rank hi ); //选取最大元素 
 	void selectionSort ( Rank lo, Rank hi ); //选择排序算法 
@@ -40,27 +41,29 @@ public:
 	Rank size() const { return _size; } //规模 
 	bool empty() const { return !_size; } //判空 
 	int disordered() const;//判断向量是否已经排序
-	T get(r) const { return _size[r]; }
+	T get(Rank r) const { return _size[r]; }
 	Rank find ( T const& e ) const { return find ( e, 0, _size ); } //无序向量整体查找 
 	Rank find ( T const& e, Rank lo, Rank hi ) const; //无序向量区间查找 
 	Rank select( Rank k ) { return quickSelect( _elem, _size, k ); } //从无序向量中找到第k大的元素 
 	Rank search( T const& e ) const //有序向量整体查找 
 	{ return ( 0 >= _size ) ? -1 : search ( e, 0, _size ); } 
-	Rank binSearch ( T const& e, Rank lo, Rank hi ) const; //有序向量区间查找 
+	Rank binSearch_v1 (T* A, T const& e, Rank lo, Rank hi ) const; //有序向量区间查找 
+	Rank binSearch_v2 (T* A, T const& e, Rank lo, Rank hi ) const;
+	Rank binSearch_v3 (T* A, T const& e, Rank lo, Rank hi ) const;
 	
 
 // 可写访问接口 
-	T& operator[] ( Rank r ); //重载下标操作符，可以类似于数组形式引用各元素 
-	const T& operator[] ( Rank r ) const; //仅限于做右值的重载版本 
+	T& operator[] ( Rank r ){return _elem[r];} //重载下标操作符，可以类似于数组形式引用各元素 
+	const T& operator[] ( Rank r ) const{return _elem[r];} //仅限于做右值的重载版本 
 	Vector<T> & operator= ( Vector<T> const& ); //重载赋值操作符，以便直接克隆向量 
 	T remove ( Rank r ); //删除秩为r的元素 
 	Rank remove ( Rank lo, Rank hi ); //删除秩在区间[lo, hi)之内的元素 
 	Rank insert ( Rank r, T const& e ); //插入元素 
 	Rank insert ( T const& e ) { return insert ( _size, e ); } //默认作为末元素插入 
 	void sort ( Rank lo, Rank hi ); //对[lo, hi)排序 
-	void sort() { sort ( 0, _size ); } //整体排序 
+	void sortAll() { sort ( 0, _size ); } //整体排序 
 	void unsort ( Rank lo, Rank hi ); //对[lo, hi)置乱 
-	void unsort() { unsort ( 0, _size ); } //整体置乱 
+	void unsortAll() { unsort ( 0, _size ); } //整体置乱 
 	Rank dedup(); //无序去重 
 	Rank uniquify(); //有序去重 
 	
@@ -100,7 +103,7 @@ template <typename T> void Vector<T>::shrink(){ //装填因子过小时压缩 //
 }
 
 template <typename T> 
-bool Vector<T>::bubble(Rank lo, Rank hi){
+bool Vector<T>::bubble_v1(Rank lo, Rank hi){//如果一开始就是
 	bool sorted = true;
 	while(++lo < hi){
 		if(_elem[lo - 1] > _elem[lo]){
@@ -122,7 +125,7 @@ void Vector<T>::bubbleSort(Rank lo, Rank hi){
 }
 
 template <typename T> 
-Rank Vector<T>::bubble(Rank lo, Rank hi){
+Rank Vector<T>::bubble_v2(Rank lo, Rank hi){
 	Rank last = lo;
 	while(++lo < hi){
 		if(_elem[lo - 1] > _elem[lo]){
@@ -196,7 +199,7 @@ template <typename T> void Vector<T>::quickSort ( Rank lo, Rank hi ){//快速排
 
 #define Put(K ,s, t) {if (1<(t) - (s)) {K.push(s); K.push(t)}}//s先进，t后进，t在顶
 #define get(K ,s, t) {t = K.pop(); s = K.pop();} //t在顶，
-template <typename T> void Vector::quickSort(Rank lo, Rank hi){
+template <typename T> void Vector<T>::quickSort(Rank lo, Rank hi){
 	Stack<Rank> Task;//
 	Put(Task, lo, hi);
 	while(!Task.empty){
@@ -213,7 +216,7 @@ template <typename T> void Vector::quickSort(Rank lo, Rank hi){
 	}
 }
 
-template <typename T> void Vector::shellSort(Rank lo, Rank hi){
+template <typename T> void Vector<T>::shellSort(Rank lo, Rank hi){
 	for (Rank d = (hi - lo) / 2; d > 0; d >>= 1) {
 		for (Rank j = lo + d; j < hi; j++) {
 			T x = _elem[j];
@@ -239,7 +242,7 @@ template <typename T> Rank  Vector<T>::find ( T const& e, Rank lo, Rank hi ) con
 } //无序向量区间查找 
 
 template <typename T>
-static Rank Vector<T>::binSearch(T* A, T const& e, Rank lo, Rank hi){
+Rank Vector<T>::binSearch_v1(T* A, T const& e, Rank lo, Rank hi) const {
 	while(lo < hi){
 		Rank mid = (lo + hi) >> 1;
 		if(e < A[mid]) {hi = mid;}
@@ -250,7 +253,7 @@ static Rank Vector<T>::binSearch(T* A, T const& e, Rank lo, Rank hi){
 }
 
 template <typename T>
-static Rank Vector<T>::binSearch(T* A, T const& e, Rank lo, Rank hi){
+Rank Vector<T>::binSearch_v2(T* A, T const& e, Rank lo, Rank hi) const{
 	while(1 < hi - lo){
 		Rank mid = (lo + hi )>>1;
 		(e < A[mid])? hi = mid :lo = mid;
@@ -259,7 +262,7 @@ static Rank Vector<T>::binSearch(T* A, T const& e, Rank lo, Rank hi){
 }
 
 template <typename T>
-static Rank Vector<T>::binSearchC(T* A, T const& e, Rank lo, Rank hi){
+Rank Vector<T>::binSearch_v3(T* A, T const& e, Rank lo, Rank hi) const {
 	while(lo < hi){
 		Rank mid = (lo + hi) >> 1;
 		(e< A[mid])? hi = mid : lo = mid+1;
@@ -267,17 +270,17 @@ static Rank Vector<T>::binSearchC(T* A, T const& e, Rank lo, Rank hi){
 	return lo-1;
 }
 
-#include "./Fib.hpp"
-template <typename T> static Rank fibSearch (T* A, T const& e, Rank lo, Rank hi){
-	Fib fib(hi-lo);
-	while(lo < hi){
-		while(hi-lo < fib.get()) fib.prev();
-		Rank mi = lo +fib.get()-1;
-		if (e < A[mi]) hi = mi;
-		else if (A[mi]< e) lo = mi+1;
-		else return mi;
-	}
-}
+// #include "./Fib.hpp"
+// template <typename T> static Rank fibSearch (T* A, T const& e, Rank lo, Rank hi){
+// 	Fib fib(hi-lo);
+// 	while(lo < hi){
+// 		while(hi-lo < fib.get()) fib.prev();
+// 		Rank mi = lo +fib.get()-1;
+// 		if (e < A[mi]) hi = mi;
+// 		else if (A[mi]< e) lo = mi+1;
+// 		else return mi;
+// 	}
+// }
 
 template <typename T> static Rank fibSearch (T* A, T const& e, Rank lo, Rank hi){
 	Fib fib(hi-lo);
@@ -290,14 +293,21 @@ template <typename T> static Rank fibSearch (T* A, T const& e, Rank lo, Rank hi)
 }
 
 // 可写访问接口 
-template <typename T> T&  Vector<T>::operator[] ( Rank r ){} //重载下标操作符，可以类似于数组形式引用各元素 
-template <typename T> const T&  Vector<T>::operator[] ( Rank r ) const{} //仅限于做右值的重载版本 
-template <typename T> Vector<T> &  Vector<T>::operator= ( Vector<T> const& ){} //重载赋值操作符，以便直接克隆向量 
-template <typename T> T  Vector<T>::remove ( Rank r ){} //删除秩为r的元素 
-template <typename T> Rank  Vector<T>::remove ( Rank lo, Rank hi ){} //删除秩在区间[lo, hi)之内的元素 
-template <typename T> Rank  Vector<T>::insert ( Rank r, T const& e ){} //插入元素 
+
+template <typename T> 
+Vector<T> &  Vector<T>::operator= ( Vector<T> const& ){
+
+} //重载赋值操作符，以便直接克隆向量 
+template <typename T> T  Vector<T>::remove ( Rank r ){
+
+} //删除秩为r的元素 
+template <typename T> 
+Rank Vector<T>::remove ( Rank lo, Rank hi ){} //删除秩在区间[lo, hi)之内的元素 
+template <typename T> 
+Rank Vector<T>::insert ( Rank r, T const& e ){} //插入元素 
 //Rank insert ( T const& e ) { return insert ( _size, e ); } //默认作为末元素插入 
-template <typename T> void  Vector<T>::sort ( Rank lo, Rank hi ){//对[lo, hi)排序 
+template <typename T> 
+void  Vector<T>::sort ( Rank lo, Rank hi ){//对[lo, hi)排序 
 	switch (rand() % 5){
 		case 1: bubblesort(lo, hi); break;
 		case 2: selectionSort(lo, hi); break;
@@ -307,12 +317,19 @@ template <typename T> void  Vector<T>::sort ( Rank lo, Rank hi ){//对[lo, hi)�
 	}
 } 
 // void sort() { sort ( 0, _size ); } //整体排序 
-template <typename T> void  Vector<T>::unsort ( Rank lo, Rank hi ){} //对[lo, hi)置乱 
+template <typename T> void  Vector<T>::unsort( Rank lo, Rank hi ){
+	
+} //对[lo, hi)置乱 
+
 //void unsort() { unsort ( 0, _size ); } //整体置乱 
-template <typename T> Rank  Vector<T>::dedup(){} //无序去重 
-template <typename T> Rank  Vector<T>::uniquify(){} //有序去重 
+template <typename T> 
+Rank  Vector<T>::dedup(){} //无序去重 
+template <typename T> 
+Rank  Vector<T>::uniquify(){} //有序去重 
 	
 // 遍历 
-template <typename T> void  Vector<T>::traverse ( void (* ) ( T& ) ){} //遍历（使用函数指针，只读或局部性修改） 
+template <typename T> 
+void  Vector<T>::traverse ( void (* ) ( T& ) ){} //遍历（使用函数指针，只读或局部性修改） 
+
 template <typename T> template <typename VST> 
 void  Vector<T>::traverse ( VST& ){} //遍历（使用函数对象，可全局性修改） 

@@ -70,3 +70,14 @@ template <typename T> template <typename VST> void BinNode<T>::travIn (VST& visi
 		default: travIn_R(this, visit); break;//递归版
 	}
 }
+template <typename T> template <typename VST> void BinNode<T>::travLevel(VST& visit){
+	BinNodePosi(T) x = this;
+	Queue<BinNodePosi(T)> Q;
+	Q.enqueue(x);
+	while(!Q.empty()){
+		x = Q.dequeue();
+		visit(x->data);
+		if(HasLChild(*x)) Q.enqueue(x->lc);
+		if(HasRChild(*x)) Q.enqueue(x->rc);
+	}
+}

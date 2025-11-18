@@ -1,25 +1,5 @@
 #include "./Graph.hpp"
-
-template<typename Tv> struct Vertex{
-	Tv data;
-	int inDegree,outDegree;
-	VStatus status;
-	int dTime,fTime;
-	int parent;
-	int priority;
-	Vertex(Tv const& d = (Tv) 0):
-		data(d), inDegree(0), outDegree(0), status(UNDISCOVERED), 
-        dTime(-1), fTime(-1), parent(-1), priority(INT_MAX){ }//
-		//INT_MAX是<climits>中的一个常量。
-};
-template<typename Te> struct Edge{
-	Te data;//数据的写法 Te edge(v, u);
-	int weight;
-	Etype type;
-	Edge(Te const& d, int w):
-		data(d), weight(w), type(UNDETERMINED) { }
-};
-
+#include "./Vertex_Edge.hpp"
 
 template <typename Tv, typename Te> //顶点类型、边类型
 class GraphMatrix : public Graph<Tv, Te> { //基于向量，以邻接矩阵形式实现的图

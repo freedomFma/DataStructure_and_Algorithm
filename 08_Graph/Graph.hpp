@@ -1,12 +1,7 @@
 #include "C++/DSA/03_stack_queue/Queue.hpp"
 #include "C++/DSA/01_vector/Vector.hpp"
+#include "./Vertex_Edge.hpp"
 #include <climits>
-
-typedef enum{UNDISCOVERED, DISCOVERED, VISITED} VStatue;
-typedef enum{UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD} EType;
-//enum 是 枚举类型（enumeration）的关键字
-//花括号 {} 里面写的是 枚举常量，它们会被自动映射为整数值（从 0 开始，逐个递增）
-
 
 template <typename Tv, typename Te> class Graph{
 private:
@@ -31,7 +26,8 @@ private:
 public:
 //顶点 
 	int n;
-	virtual int insert(Tv const&) = 0;//纯虚函数，必须由子类提供实现。这样的类叫做抽象类。抽象类不能直接实例化，只能作为基类使用。//插入顶点，返回*编号*
+	virtual int insert(Tv const&) = 0;//纯虚函数，必须由子类提供实现。这样的类叫做抽象类。
+	//抽象类不能直接实例化，只能作为基类使用。//插入顶点，返回*编号*
 	virtual Tv remove(int) = 0;//删除顶点及其关联边，返回该顶点的信心
 	virtual Tv& vertex(int) = 0;//顶点v的数据（该顶点的确存在）
 	virtual int inDegree(int) = 0;
@@ -227,7 +223,8 @@ void Graph<Tv, Te>::BCC(int v, int& clock, Stack<int>& S){
 	}
 	status(v) = VISITED;
 }
-#endef hca
+#undef hca
+
 template <typename Tv, typename Te> void Graph<Tv, Te>::bcc(int s){
 	reset();
 	int clock = 0;
@@ -243,7 +240,7 @@ template <typename Tv, typename Te> void Graph<Tv, Te>::bcc(int s){
 
 //优先级搜索
 template <typename Tv, typename Te> template <typename PU> 
-void Graph<Tv, Te>::PFS(int v, PU prioUpdater){
+void Graph<Tv, Te>::PFS(int s, PU prioUpdater){
 	priority(s) = 0;
 	status(s) = VISITED;
 	parent(s) = -1;

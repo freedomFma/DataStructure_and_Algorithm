@@ -12,15 +12,15 @@ public:
 };
 
 //接口实现
-//查找，返回目标节点的指针引用，或者假想命中节点的空节点的指针引用
+//查找，返回目标节点的指针引用，或者返回假想命中节点的空节点的指针引用
 template <typename T> BinNodePosi(T)& BST<T>::search (const T& e){
-	_hot = NULL;
+	_hot = NULL;//根节点的父节点为NUll
 	searchIn(_root, e, _hot);
 }
 template <typename T> static BinNodePosi(T)& searchIn (BinNodePosi(T) & v, const T& e, BinNodePosi(T)& hot){
-	if(!v || (v->data == e)) return v;
-	hot = v;
-	return searchIn(((v->data < e) ? v->lc : v->rc) , e, hot);
+	if(!v || (v->data == e)) return v; //递归基，找到了或者到达空节点
+	hot = v;//调用之后的hot总是v的父节点
+	return searchIn(((v->data < e) ? v->lc : v->rc) , e, hot);//递归
 }
 
 //插入
