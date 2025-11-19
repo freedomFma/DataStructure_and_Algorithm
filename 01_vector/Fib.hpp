@@ -1,5 +1,4 @@
-#define Rank int 
-
+#include "Rank.hpp"
 class Fib { //Fibonacci数列类 
 private: 
 	Rank f, g; //f = fib(k - 1), g = fib(k)。均为int型，很快就会数值溢出 
