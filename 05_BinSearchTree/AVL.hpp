@@ -16,14 +16,24 @@ public:
     bool remove (const T& e);
 };
 
+// ============================================================
+// ===================  插入算法 insert(e)  =====================
+// ============================================================
 template <typename T> BinNodePosi(T) AVL<T>::insert(const T& e){
+    //首先查找:目标指针要么命中，要么指向假想的命中节点NULL
 	BinNodePosi(T) &x = search(e);//指针引用，方便修改指针的指向
-	if (x) return;
+	if (x) return;//如果存在直接返回
+    //新建好节点
 	BinNodePosi(T) xx = x = new BinNode<T>(e, _hot); _size++;
+
+    //从x的父节点开始，逐层向上检查是否失衡
+    // 注意:父节点不可能失衡，因为插入节点只会增加高度1
 	for(BinNodePosi(T) g = _hot; g; g = g->parent){
 		if( !AvlBalanced(*g) ){
             FromParentTo(*g) = rotateAt(tallerChild(tallerChild(g)));
-            break;
+            break;//一次调整就复原了AVL树的平衡性
+            //这个节点g一定是平衡因子=|2|,因此在调整完成之后它的平衡因子恢复
+            //并且它的高度不会发生任何变化，这不会给上层任何祖父节点带来平衡因子的失衡
         }
         else{
             updateHeight(g);
@@ -31,56 +41,23 @@ template <typename T> BinNodePosi(T) AVL<T>::insert(const T& e){
 	}
     return xx;
 } 
-
+// ============================================================
+// ===================  删除算法 remove(e)  =====================
+// ============================================================
 template <typename T> bool AVL<T>::remove(const T& e){
+    //首先查找:目标指针要么命中，要么指向假想的命中节点NULL
     BinNodePosi(T) &x = search(e);//指针引用，方便修改指针的指向
 	if (!x) return false;
+    //删除节点
     removeAt(e, _hot);
     _size--;
     for(BinNodePosi(T) g = _hot; g; g = g->parent){
 		if( !AvlBalanced(*g) ){
             g = FromParentTo(*g) = rotateAt(tallerChild(tallerChild(g)));
+            //这里可能回一直失衡，因为子树的高度可能变小了，这会一直向上传播
         }
         updateHeight(g);
 	}
     return true;
 }
 
-template <typename T> BinNodePosi(T) BST<T>::connect34
-(BinNodePosi(T) a, BinNodePosi(T) b, BinNodePosi(T) c, 
-BinNodePosi(T) T0, BinNodePosi(T) T1 , BinNodePosi(T) T2, BinNodePosi(T) T3){
-    a->lc = T0; if(T0) T0->parent = a;
-    a->rc = T1; if(T1) T1->parent = a; 
-    updateHeight(a);
-    c->lc = T2; if(T0) T2->parent = c;
-    c->rc = T3; if(T1) T3->parent = c; 
-    updateHeight(c);
-    b->lc = a; a->parent = b;
-    b->rc = c; c->parent = b;
-    updateHeight(b);
-    return b;
-}
-template <typename T> BinNodePosi(T) BST<T>::rotateAt(BinNodePosi(T) v){
-    BinNodePosi(T) p = v->parent;
-    BinNodePosi(T) g = p->parent;
-    if ( IsLChild(*p) ){
-        if( IsLChild(*v) ){
-            p->parent  = g->parent;
-            return connect34(v, p ,g , v->lc, v->rc, p->rc, g->rc);
-        }
-        else{
-            v->parent = g->parent;
-            return connect34(p, v ,g , p->lc, v->lc, v->rc, g->rc);
-        }
-    }
-    else{
-        if( IsRChild(*v) ){
-            p->parent  = g->parent;
-            return connect34(g, p ,v , g->lc, p->lc, v->lc, v->rc, );
-        }
-        else{
-            v->parent = g->parent;
-            return connect34(p, v ,g , g->lc, v->lc, v->rc, p->rc);
-        }
-    }
-}
