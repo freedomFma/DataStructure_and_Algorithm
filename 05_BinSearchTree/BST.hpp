@@ -22,7 +22,7 @@ template <typename T> BinNodePosi(T)& BST<T>::search (const T& e){
 }
 template <typename T> static 
 BinNodePosi(T)& searchIn (BinNodePosi(T) & v, const T& e, BinNodePosi(T)& hot){
-	if(!v || (v->data == e)) return v; //递归基，找到了或者到达空节点
+	if(!v || (v->data == e)) return v; //递归基，找到了或者到达空节点（返回的节点有可能是一个空节点）
 	hot = v;//调用之后的hot总是v的父节点
 	return searchIn(((v->data < e) ? v->lc : v->rc) , e, hot);//递归
 }//这里的_hot不断更新是为了插入算法中使用
@@ -115,10 +115,8 @@ BinNodePosi(T) T0, BinNodePosi(T) T1 , BinNodePosi(T) T2, BinNodePosi(T) T3){
 }
 
 //----------------------------------
-// [1] connect34(a,b,c,T0,T1,T2,T3)
-// [2] 使用情况：00和11——p调整为根节点，01和10——v调整为根节点
-// [3] 00和11——单旋操作。与splay双层调整不一样
-// [4] 01和10——双旋操作。与splay双层调整一样
+// [1] rotateAt(x)
+// [2] 注意:参数v三代中最底层的节点
 //----------------------------------
 template <typename T> BinNodePosi(T) BST<T>::rotateAt(BinNodePosi(T) v){
     BinNodePosi(T) p = v->parent;
