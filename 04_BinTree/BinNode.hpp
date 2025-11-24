@@ -1,7 +1,14 @@
+#pragma once
 #define BinNodePosi(T) BinNode<T>*
-#define stature(p) ((p)? (p->height) : -1)
+
+#if defined (RedBlack)
+	#define stature(p) ((p)? (p->height) : 0)
+#else
+	#define stature(p) ((p)? (p->height) : -1)
+#endif
+
 typedef enum {RB_RED, RB_BLACK} RBColor;
-#define IsRoot(x) (!((x).parent))
+#define IsRoot(x) (!((x).parent))//x是节点不是指针
 #define IsLChild(x) ( !IsRoot(x) && (&(x) == (x).parent->lc)) //&(x)取x的地址
 #define IsRChild(x) ( !IsRoot(x) && (&(x) == (x).parent->rc)) //&(x)取x的地址
 #define HasParent(x) (!IsRoot(x))
@@ -16,6 +23,12 @@ typedef enum {RB_RED, RB_BLACK} RBColor;
 	(IsLChild(*(x.parent)) ? (x).parent->parent->rc : (x).parent->parent->lc) 
 #define FromParentTo(x) \
 	(IsRoot(x)? _root : (IsLChild(x) ? (x).parent->lc : (x).parent->rc))
+#define IsBlack(x) ((x)->color == RB_BLACK)
+#define IsRed(x) ((x)->color == RB_RED)
+#define uncle(x) \
+	(IsLChild(*(x.parent)) ? (x).parent->parent->rc : (x).parent->parent->lc)
+
+template <typename T> class BinTree;
 
 //BinNode模版类定义
 template <typename T> struct BinNode{
@@ -38,7 +51,10 @@ template <typename T> struct BinNode{
 	int size();//当前节点的后代总数，这个节点作为根的子树的规模。
 	BinNodePosi(T) insertAsLC(T const& e);//作为当前节点的左孩子插入
 	BinNodePosi(T) insertAsRC(T const& e);//作为当前节点的左孩子插入
-	BinNodePosi(T) succ();//取当前节点的直接后继❓
+	BinNodePosi(T) attachLc(BinTree<T>* &S);//将T作为当前节点的左子树接入
+	BinNodePosi(T) attachRc(BinTree<T>* &S);//将T作为当前节点的右子树接入
+
+	BinNodePosi(T) succ();//取当前节点的直接后继
 	template <typename VST> void travLevel (VST&);
 	template <typename VST> void travPre (VST&);
 	template <typename VST> void travIn (VST&);
@@ -55,12 +71,41 @@ template <typename T> int BinNode<T>::size(){
 	if(rc) s += rc->size();
 	return s;
 }
+
+// ============================================================
+// ===============  层序遍历  ===============
+// ============================================================
 template <typename T> BinNodePosi(T) BinNode<T>::insertAsLC(T const&e){
 	return lc = new BinNode(e, this);
 }
 template <typename T> BinNodePosi(T) BinNode<T>::insertAsRC(T const&e){
 	return rc = new BinNode(e, this);
 }
+// ============================================================
+// ===============  层序遍历  ===============
+// ============================================================ 
+//将T作为当前节点的左子树接入
+template <typename T>
+BinNode<T>* BinNode<T>::attachLc(BinTree<T>* &S){
+	if(this->lc = S->_root) this->lc->parent = this;//将T的根节点接入当前节点的左孩子，明确父子关系
+	S->root = NULL;//指向子树根节点的指针置空
+	S->_size = 0;//子树规模置0
+	release(S);//释放 BinTree<T> 这个对象本身（注意不是释放它里面的节点，因为节点已经并到主树里去了）。
+	S = NULL;
+	return this->lc;//返回接入的左子树根节点位置
+}
+//将T作为当前节点的右子树接入
+template <typename T>
+BinNode<T>* BinNode<T>::attachRc(BinTree<T>* &S){
+	if(this->rc = S->_root) this->rc->parent = this;//将T的根节点接入当前节点的右孩子，明确父子关系
+	S->root = NULL;//指向子树根节点的指针置空
+	S->_size = 0;//子树规模置0
+	release(S);//释放 BinTree<T> 这个对象本身（注意不是释放它里面的节点，因为节点已经并到主树里去了）。
+	S = NULL;
+	return this->rc;//返回接入的右子树根节点位置
+}
+
+
 template <typename T> template <typename VST> void BinNode<T>::travIn (VST& visit){
 	switch( rand() % 5 ){
 		case 1: travIn_I1(this, visit); break;//迭代版#1

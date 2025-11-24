@@ -1,5 +1,5 @@
-#include "./Stack.hpp"
-#include "../01_vector/Vector.hpp"
+#include "Stack.hpp"
+#include "Vector.hpp"
 
 class stackPermutaion{
     public:

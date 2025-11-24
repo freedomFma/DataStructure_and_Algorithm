@@ -1,5 +1,6 @@
+#include "Rank.hpp"
 
-typedef int Rank;
+
 #define ListNodePosi(T) ListNode<T>* //列表节点位置 
 
 template <typename T> struct ListNode {//列表节点模板类（以双向链表形式实现） 

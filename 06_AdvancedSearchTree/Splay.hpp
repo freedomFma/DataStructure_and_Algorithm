@@ -9,9 +9,20 @@ public:
 	bool remove (const T& e);
 };
 
-//伸展算法，将节点v提升至根节点
+
+// ============================================================
+// ===============  伸展算法，将节点v提升至根节点）  ===============
+// ============================================================
+
+//----------------------
+// [1] splay(v)
+// [2] 参数是需要伸展到根节点的节点v 
+//----------------------
 template <typename T> BinNodePosi(T) Splay<T>::splay(BinNodePosi(T) v){
 	if (!v) return NULL;
+	
+	//----------------------
+	//三代节点伸展，有4种情况
 	BinNodePosi(T) p,g,gg;
 	while( (p = v->parent) && (g = p->parent) ){
 		BinNodePosi(T) gg = g->parent;
@@ -41,6 +52,8 @@ template <typename T> BinNodePosi(T) Splay<T>::splay(BinNodePosi(T) v){
 			v->attachLc(p);
 			break;
 		}
+		//-------------------------
+		//确定上升到祖父节点的v的父节点
 		if(!gg) v->parent = NULL;
 		else(g==gg->lc)? gg->attachLc(v) : gg->attachRc(v);
 		//注意，这里只是更新了gpv三个节点的高度，
@@ -66,7 +79,9 @@ template <typename T> BinNodePosi(T) Splay<T>::splay(BinNodePosi(T) v){
 	return v;
 }
 
-
+// ============================================================
+// ===============    搜索查找算法 search(e)    =================
+// ============================================================
 template <typename T> 
 BinNodePosi(T)& Splay<T>::search(const T& e){
 	BinNodePosi(T) p = BST<T>::search(e);
@@ -74,6 +89,9 @@ BinNodePosi(T)& Splay<T>::search(const T& e){
 	return _root;
 }
 
+// ============================================================
+// =================     插入算法 insert(e)    =================
+// ============================================================
 //搜索节点e，若命中则将该节点伸展至根，否则将最后访问的节点伸展至根
 template <typename T> 
 BinNodePosi(T) Splay<T>::insert(const T& e){
@@ -102,6 +120,9 @@ BinNodePosi(T) Splay<T>::insert(const T& e){
 	return _root;
 }
 
+// ============================================================
+// =================     删除算法 remove(e)    =================
+// ============================================================
 //删除节点e
 template <typename T> 
 bool Splay<T>::remove(const T& e){

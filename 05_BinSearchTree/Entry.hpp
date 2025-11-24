@@ -7,4 +7,4 @@ template <typename K,typename V> struct Entry{
 	bool operator> (Entry<K,V> const& e) {return key > e.key};
 	bool operator== (Entry<K,V> const& e) {return key == e.key};
 	bool operator!= (Entry<K,V> const& e) {return key != e.key};
-}
+};

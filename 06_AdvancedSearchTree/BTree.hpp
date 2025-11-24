@@ -26,7 +26,7 @@ public:
 };
 
 // ============================================================
-// ========  B树的主要算法：查找、插入（上溢）、删除（下溢）  ==========
+// ========  B树的主要算法：查找、插入（上溢）、删除（下溢）  =========
 // ============================================================
 
 //----------------------------------
@@ -83,7 +83,7 @@ void BTree<T>::solveOverflow(BTNodePosi<T> v){
 		if(u->chile[0])
 			for(Rank j = 0; j < _m-s;j++)//孩子指针_m-s个
 				u->child[j]->parent = u;
-				
+
 		//-----------------------
 		//将轴点上溢：
 		BTNodePosi<T> p = v->parent;//找到分裂节点的父节点
@@ -138,6 +138,7 @@ template <typename T> void BTree<T>::solveUnderflow(BTNodePosi<T> v){
 		while(p->child[r] != v) r++;//r是孩子向量的秩
 		//------------------------------
 		//如果v的左兄弟存在，而且足够可以借给v
+		// 旋转操作
 		if ( 0 < r ){
 			BTNodePosi<T> ls = p->child[r - 1];
 			if( (_m+1)/2 < ls->child.size() ){
@@ -152,6 +153,7 @@ template <typename T> void BTree<T>::solveUnderflow(BTNodePosi<T> v){
 		}
 		//------------------------------
 		//如果v的右兄弟存在，而且足够可以借给v
+		// 旋转操作
 		if(p->child.size() -1 > r){
 			BTNodePosi<T> rs = p->child[r+1];
 			v->key.insert(v->key.size(), p->key[r]);

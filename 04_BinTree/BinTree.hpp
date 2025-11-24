@@ -92,6 +92,9 @@ BinNodePosi(T) BinTree<T>::attachAsRC(BinNodePosi(T) x, BinTree<T>* &T){
 	return x;
 }
 
+
+
+
 //删除这个节点子树
 template <typename T>int BinTree<T>::remove(BinNodePosi(T) x){
 	FromParentTo(*x) = NULL;//将这个节点的父母的孩子设置为NULL
@@ -118,7 +121,9 @@ template <typename T> BinTree<T>* BinTree<T>::secade(BinNodePosi(T) x){
 	return S;
 }
 
-//遍历
+// ============================================================
+// ===============  层序遍历  ===============
+// ============================================================
 template <typename T> template <typename VST> 
 void BinTree<T>::travLevel(VST& visit){
 	BinNodePosi(T) x = _root;
@@ -131,6 +136,10 @@ void BinTree<T>::travLevel(VST& visit){
 		if(HasRChild(*x)) Q.enqueue(x->rc);
 	}
 }
+
+// ============================================================
+// ===============  前序遍历  ===============
+// ============================================================
 template <typename T> template <typename VST> void BinTree<T>::travPre(VST& visit){
 	switch( rand() % 3 ){
 		case 1: travPre_R(this, VST& visit); break;
@@ -173,6 +182,10 @@ void travPre_I2(BinNodePosi(T) x, VST& visit){
 		x = S.pop();//x为下一个出栈的右子树
 	}
 }
+
+// ============================================================
+// ===============  中序遍历  ===============
+// ============================================================
 template <typename T> template <typename VST> void BinTree<T>::travIn(VST& visit){
 	switch( rand() % 5 ){
 		case 1: travIn_I1(this, visit); break;//迭代版#1

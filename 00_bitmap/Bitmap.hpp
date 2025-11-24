@@ -43,9 +43,12 @@ public:
 	bool test(int k);
 };
 
+
 bool Bitmap::test(int k){
 	return M[k>>3] & (0x80 >>(k & 0x07));
 }
+
+
 void Bitmap::set(int k){
 	if(test(k)) return;
 	expand(k);

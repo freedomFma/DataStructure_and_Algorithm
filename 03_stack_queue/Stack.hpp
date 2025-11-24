@@ -1,5 +1,5 @@
-#include "../01_vector/Vector.hpp"
-#include "../02_list/List.hpp"
+#include "Vector.hpp"
+#include "List.hpp"
 
 template <typename T> class Stack: public Vector<T>{
 public://Vector里面的开放接口可以直接使用，比如size()\empty()
