@@ -1,5 +1,5 @@
-#include "./BinNode.hpp"
-#include "../03_stack_queue/Stack.hpp"
+#include "BinNode.hpp"
+#include "Stack.hpp"
 
 /** 模版类的定义 **/ 
 template <typename T> class BinTree{

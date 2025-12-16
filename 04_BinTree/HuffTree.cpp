@@ -1,9 +1,9 @@
-#include "../02_list/List.hpp"
+#include "List.hpp"
 #include "BinTree.hpp"
 #include "BinNode.hpp"
 #include "HuffChar.hpp"
 #include "../00_bitmap/Bitmap.hpp"
-#include "../07_Dictionary/Hashtable.hpp"
+#include "Hashtable.hpp"
 
 #define HuffTree BinTree<HuffChar>
 typedef List<HuffTree*> HuffForest;

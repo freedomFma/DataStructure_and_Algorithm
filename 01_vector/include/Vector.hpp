@@ -2,6 +2,7 @@
 #include <ctime>
 #include "Rank.hpp"
 #include <algorithm>
+#include <stdexcept>
 
 #define DEFAULT_CAPACITY 3 //默认的初始容量（实际应用中可设置为更大） 
 
@@ -41,7 +42,10 @@ public:
 	Rank find ( T const& e ) const { return find ( e, 0, _size ); } //无序向量整体查找 
 	Rank find ( T const& e, Rank lo, Rank hi ) const; //无序向量区间查找 
 	Rank select( Rank k ) { return quickSelect( _elem, _size, k ); } //从无序向量中找到第k大的元素 
-
+	T max() const; //无序向量最大元素 
+	T min() const; //无序向量最小元素 
+	Rank maxIndex() const; //无序向量最大元素的秩 
+	Rank minIndex() const; //无序向量最小元素的秩
 	
 
 // 可写访问接口 
@@ -58,6 +62,7 @@ public:
 	void unsortAll() { unsort ( 0, _size ); } //整体置乱 
 	Rank dedup(); //无序去重 
 	Rank uniquify(); //有序去重 
+	void swap(Rank i,Rank j);
 	
 // 遍历 
 	void traverse ( void (*visit)(T&) ); //遍历（使用函数指针，只读或局部性修改） 
@@ -67,19 +72,7 @@ public:
 template <typename T>
 Rank quickSelect(Vector<T>& vec, Rank k);
 
-// ============================================================
-// ====================  向量的基础操作算法  =====================
-// ============================================================
 
-//----------------------------------
-// 重载操作符
-// [1] operator[] 下标操作符
-// [2] operator= 赋值操作符
-//----------------------------------
-// template <typename T> 
-// T& Vector<T>::operator[] ( Rank r ){//重载下标操作符，可以类似于数组形式引用各元素 
-// 	return _elem[r];
-// } 
 template <typename T> 
 const T& Vector<T>::operator[] ( Rank r ) const {//仅限于做右值的重载版本 
 	return _elem[r];
@@ -202,23 +195,12 @@ Rank Vector<T>::dedup() {
     }
     return oldSize - _size;
 }
-//有序去重,复杂度为O(n)
-// template <typename T> 
-// Rank Vector<T>::uniquify(){
-// 	Rank oldSize = _size;
-// 	Rank count = 0;
-// 	for(Rank i = 0,j = 0; i < _size; i++){
-// 		if( !(_elem[i] == _elem[++j]) ){
-// 			_elem[++i] = _elem[j];
-// 			count++;
-// 		}
-// 	}
-// 	_size = ++count;
-// 	return oldSize - _size;
-// } 
+
 template <typename T>
 Rank Vector<T>::uniquify() {
     if (_size < 2) return 0; // 空或只有一个元素
+
+	Rank oldSize = _size;
 
     Rank i = 0; // 慢指针，指向最后一个不重复元素
     for (Rank j = 1; j < _size; j++) { // 快指针
@@ -226,7 +208,7 @@ Rank Vector<T>::uniquify() {
             _elem[++i] = _elem[j]; // 遇到新元素就移动到 i 后面
         }
     }
-    Rank oldSize = _size;
+    
     _size = i + 1;
     return oldSize - _size; // 返回删除的元素个数
 }
@@ -284,4 +266,101 @@ Rank Vector<T>::remove ( Rank lo, Rank hi ){//删除秩在区间[lo, hi)之内�
 	shrink();
 	return n;
 } 
+
+
+
+template <typename T> 
+T Vector<T>::max() const{ 
+	//确保向量非空
+	if(_size <= 0) throw std::runtime_error("Vector is empty");
+	
+	//寻找最大元素
+	T maxElem = _elem[0];
+	for(Rank i = 1; i < _size; i++){
+		maxElem = (_elem[i] > maxElem) ?  _elem[i] : maxElem;
+	}
+	return maxElem;
+};
+
+
+template <typename T> //无序向量最小元素 
+T Vector<T>::min() const{
+	if(_size <= 0) throw std::runtime_error("Vector is empty");
+
+	T minElem = _elem[0];
+	for(Rank i = 1; i < _size; i++){
+		minElem = (_elem[i] < minElem) ?  _elem[i] : minElem;
+	}
+	return minElem;
+
+} 
+
+template <typename T> //无序向量最大元素的秩 
+Rank Vector<T>::maxIndex() const{
+	//确保向量非空
+	//if(_size < = 0) throw std::runtime_error("Vector is empty");
+	if(_size <= 0) return -1;
+	
+	//寻找最大元素
+	T maxElem = _elem[0];
+	Rank maxIndex = 0;
+	for(Rank i = 1; i < _size; i++){
+		if(_elem[i] > maxElem){
+			maxElem = _elem[i];
+			maxIndex = i;
+		}
+	}
+	return maxIndex;
+} 
+
+template <typename T> //无序向量最小元素的秩
+Rank Vector<T>::minIndex() const{
+	if(_size <= 0) return -1;
+	
+	//寻找最大元素
+	T minElem = _elem[0];
+	Rank minIndex = 0;
+	for(Rank i = 1; i < _size; i++){
+		if(_elem[i] > minElem){
+			minElem = _elem[i];
+			minIndex = i;
+		}
+	}
+	return minIndex;
+} 
+
+
+template <typename T>
+void Vector<T>::swap(Rank i, Rank j){
+    int temp;
+
+    temp = _elem[i];
+    _elem[i] = _elem[j];
+    _elem[j] = temp;
+}
+
+// ============================================================
+// ====================    向量的排序算法     ===================
+// == [1]起泡排序(bubble sort)    ==============================
+// == [2]选择排序(select sort)    ==============================
+// == [3]归并排序(merge sort)     ==============================
+// == [4]堆排序(heap sort)        ==============================
+// == [5]快速排序(quick sort)     ==============================
+// == [6]希尔排序(shell sort)     ==============================
+// ============================================================
+
+
+template <typename T> 
+void sort ( Rank lo, Rank hi ){ //对[lo, hi)排序 
+    switch (std::rand() % 6) {
+        case 1: bubbleSort_v1(lo, hi); break;
+        case 2: selectionSort(lo, hi); break;
+        case 3: mergeSort(lo, hi); break;
+        case 4: heapSort(lo, hi); break;
+        case 5: quickSort_v1(lo, hi); break;
+        default: shellSort(lo, hi); break;
+    }
+}
+
+
 #endif

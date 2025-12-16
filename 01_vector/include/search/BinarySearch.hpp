@@ -8,6 +8,7 @@
 // [3]二分查找：返回hi-1
 //  主要的差别在于区间的选择。都是先比较左边，再比较右边。
 //----------------------------------
+
 template <typename T>
 Rank binSearch_v1(T* A, T const& e, Rank lo, Rank hi)  {
 	while(lo < hi){

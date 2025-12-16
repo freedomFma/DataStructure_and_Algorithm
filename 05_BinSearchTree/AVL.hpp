@@ -1,4 +1,4 @@
-#include "./BST.hpp"
+#include "BST.hpp"
 #define Balanced(x) ( stature((x).lc) == stature((x).rc ) )
 #define BalFac(x) ( stature(x).lc - stature(x).rc )
 #define AvlBalanced ( (-2< BalFac(x)) && (BalFac(x) < 2) )

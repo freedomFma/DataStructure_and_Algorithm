@@ -1,4 +1,5 @@
 #pragma once
+
 #define BinNodePosi(T) BinNode<T>*
 
 #if defined (RedBlack)
